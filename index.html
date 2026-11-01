@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuickTask</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 650px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f4f6f9;
+            color: #222;
+        }
+        .card {
+            background: white;
+            padding: 22px;
+            margin-bottom: 20px;
+            border-radius: 12px;
+        }
+        input, textarea, button {
+            box-sizing: border-box;
+            width: 100%;
+            padding: 12px;
+            margin: 7px 0;
+            border: 1px solid #ddd;
+            border-radius: 7px;
+        }
+        button {
+            background: #2563eb;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        li {
+            padding: 10px 0;
+        }
+        li button {
+            width: auto;
+            margin-left: 8px;
+            padding: 7px 12px;
+        }
+        .done { text-decoration: line-through; color: gray; }
+    </style>
+</head>
+<body>
+    <h1>QuickTask</h1>
+    <p>A simple task manager.</p>
+
+    <div class="card">
+        <h2>My Tasks</h2>
+        <input id="taskInput" placeholder="Enter a task">
+        <button onclick="addTask()">Add Task</button>
+        <ul id="taskList"></ul>
+    </div>
+
+    <div class="card">
+        <h2>Share Feedback</h2>
+        <p>Tell us what you think about QuickTask.</p>
+        <input id="userName" placeholder="Your name or account">
+        <textarea id="feedback" placeholder="Write your feedback..."></textarea>
+        <button onclick="submitFeedback()">Submit Feedback</button>
+        <p id="message"></p>
+    </div>
+
+    <script>
+        function addTask() {
+            const input = document.getElementById("taskInput");
+            if (!input.value.trim()) return;
+
+            const li = document.createElement("li");
+            const span = document.createElement("span");
+            span.textContent = input.value;
+
+            const done = document.createElement("button");
+            done.textContent = "Done";
+            done.onclick = () => span.classList.toggle("done");
+
+            const remove = document.createElement("button");
+            remove.textContent = "Delete";
+            remove.onclick = () => li.remove();
+
+            li.append(span, done, remove);
+            document.getElementById("taskList").appendChild(li);
+            input.value = "";
+        }
+
+        function submitFeedback() {
+            const name = document.getElementById("userName").value.trim();
+            const feedback = document.getElementById("feedback").value.trim();
+
+            if (!name || !feedback) {
+                alert("Please enter your name and feedback.");
+                return;
+            }
+
+            const saved = JSON.parse(localStorage.getItem("feedback") || "[]");
+            saved.push({
+                name,
+                feedback,
+                date: new Date().toISOString()
+            });
+            localStorage.setItem("feedback", JSON.stringify(saved));
+
+            document.getElementById("message").textContent =
+                "Thank you! Your feedback was saved.";
+            document.getElementById("feedback").value = "";
+        }
+    </script>
+</body>
+</html>
